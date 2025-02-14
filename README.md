@@ -153,8 +153,10 @@ Teamly's rate limit may be strictier. I recommend 1100ms as a minimum to not get
 
   let deletionCount = 0
   var loop = true
+  var offsetNum = 0
+
   while (loop) {
-    const messages = await api.getMessages(channelId)
+    const messages = await api.getMessages(channelId, undefined, { offset: offsetNum })
 
     // We reached the start of the conversation
     if (messages.messages.length < 50 && messages.messages.filter(x => x.createdBy.id === userId).length === 0) {
@@ -162,6 +164,9 @@ Teamly's rate limit may be strictier. I recommend 1100ms as a minimum to not get
       console.log(`[${deletionCount}/${amount}] Reached the start of the conversations! Ending.`)
       continue
     }
+
+    // Update last message snowflake for next iteration
+    offsetNum = offsetNum+=50
 
     for (const aMessage of messages.messages) {
       if (loop === false) break
