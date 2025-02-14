@@ -280,7 +280,7 @@ I don't know, maybe. I have used lots of scripts in the past, often deleted 100k
 
 But I can't guarantee anything. Use at your own risk.
 
-Automating user accounts is againt [Teamly's Terms of Service](https://teamly.one/tos).
+Automating user accounts is may be againt [Teamly's Terms of Service](https://teamly.one/tos).
 
 ## Listen to events, do some advanced stuff
 
