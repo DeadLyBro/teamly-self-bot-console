@@ -128,7 +128,7 @@ You can use `loop = false` at any time to stop it.
     const sentMessage = await api.sendMessage(channelId, message)
     await api.deleteMessage(channelId, sentMessage.message.id)
     console.log(`Sent ${++count} messages`)
-    await api.delay(10*1000) // 61 seconds
+    await api.delay(61*1000) // 61 seconds
   }
 }
 ```
