@@ -6,44 +6,59 @@ const prefix = '!';           // Diğer botlarla karışmamak için ön ek (değ
 const adminId = '1234567890'; // Buraya kendi ID'nizi girip daha sonra isterseniz kullanabilirsiniz
 
 let bot;
+let reconnectInterval = 500;
 
 function createWebSocket() {
-	const ws = new WebSocket('wss://api.teamly.one/api/v1/ws', {
-		headers: {
-			Authorization: `Bot ${token}`
-		}
-	});
-		
-	ws.on('open', function open() {
-		console.log(`Teamly'e bağlanıldı.`);
-		setInterval(() => {
-			ws.send(JSON.stringify({t: "HEARTBEAT", d: {}}));
-		}, 20000); // Aktif kalmak için her 20 saniyede heartbeat eventi gönderir
-		
-	});
-	
-	ws.onclose = (event) => {
-        console.log(`WebSocket connection closed: ${event.reason}`);
-        console.log('Connection is closed, trying to reconnect...');
-        createWebSocket();
-    };
-	
-	function closeWebSocket() {
-		ws.close();
-	}
-	
-	process.on('SIGINT', function() {
-		closeWebSocket();
-		
-		setTimeout(() => {
-			process.exit();
-		}, 500);
-	});
-
-	return ws;
+  const newWs = new WebSocket('wss://api.teamly.one/api/v1/ws', {
+    headers: {
+      Authorization: `Bot ${token}`
+    }
+  });
+  return newWs;
 }
 
-let ws = createWebSocket();
+ws = createWebSocket();
+
+ws.on('open', async function open() {
+  console.log('Connected to Teamly');
+  
+  const heartbeatInterval = setInterval(() => {
+    if (ws && ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify({ t: "HEARTBEAT", d: {} }));
+    }
+  }, 20000);
+  
+  ws.on('close', () => clearInterval(heartbeatInterval));
+});
+
+ws.on('error', (error) => {
+  console.error('WebSocket hatası:', error);
+});
+
+ws.on('close', (event) => {
+  console.log(`WebSocket bağlantısı kapandı: ${event.reason}`);
+  console.log('Bağlantı kapandı, yeniden bağlanmaya çalışılıyor...');
+  
+  setTimeout(() => {
+    ws = createWebSocket();
+    
+  }, reconnectInterval);
+});
+
+function closeWebSocket() {
+  setTimeout(() => {
+    if (ws && ws.readyState === ws.OPEN) {
+      ws.close();
+    }
+  }, 500);
+}
+
+process.on('SIGINT', function() {
+  closeWebSocket();
+  setTimeout(() => {
+    process.exit();
+  }, 1000);
+});
 
 /** @type {import('./types').api['delay']} */
 var delay = ms => new Promise(res => setTimeout(res, ms));
@@ -63,13 +78,13 @@ var apiCall = (apiPath, body, method = 'GET', options = {}) => {
 	  },
 	  ...options,
 	}
-
+	
 	const isFormData = body?.constructor?.name === 'FormData'
 	if (!isFormData) {
 	  fetchOptions.headers['Content-Type'] = 'application/json'
 	  fetchOptions.body = JSON.stringify(body)
 	}
-
+	
 	return fetch(`https://api.teamly.one/api/v1${apiPath}`, fetchOptions) 
 	.then(res => {
 		if (res.ok) {
@@ -86,15 +101,14 @@ var apiCall = (apiPath, body, method = 'GET', options = {}) => {
 		console.error(err);
 		throw new Error('An error occurred while fetching the API.');
 	});
-
 }
 
 /** @type {import('./types').api} */
 var api = {
     /* Channels */
-		  /* Update Channel */
-		  updateChannel: (teamId, channelId, name, additionalData = undefined) => apiCall(`/teams/${teamId}/channels/${channelId}`, { name, additionalData }, "PATCH"),
-		  updateChannelRolePermissions: (teamId, channelId, roleId, allow = 0, deny = 0) => apiCall(`/teams/${teamId}/channels/${channelId}/permissions/role/${roleId}`, { allow, deny }, "POST"),
+	/* Update Channel */
+	updateChannel: (teamId, channelId, name, additionalData = undefined) => apiCall(`/teams/${teamId}/channels/${channelId}`, { name, additionalData }, "PATCH"),
+	updateChannelRolePermissions: (teamId, channelId, roleId, allow = 0, deny = 0) => apiCall(`/teams/${teamId}/channels/${channelId}/permissions/role/${roleId}`, { allow, deny }, "POST"),
     getChannels: (teamId) => apiCall(`/teams/${teamId}/channels`),
     createChannel: (teamId, name, type = "text", additionalData = { streamChannel: undefined, streamPlatform: undefined }) => apiCall(`/teams/${teamId}/channels`, { name, type, additionalData }, "PUT"),
     deleteChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}`, undefined, "DELETE"),
@@ -128,12 +142,12 @@ var api = {
       ]) => apiCall(`/channels/${channelId}/messages`, { content, embeds }, "POST"),
 
     /* Teams */
-		  /* Members */
-		  addRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, undefined, "POST"),
-		  removeRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, undefined, "DELETE"),
-		  kickMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`, undefined, "DELETE"),
-		  getMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`),
-		  listMembers: (teamId) => apiCall(`/teams/${teamId}/members`),
+	/* Members */
+	addRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, undefined, "POST"),
+	removeRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, undefined, "DELETE"),
+	kickMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`, undefined, "DELETE"),
+	getMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`),
+	listMembers: (teamId) => apiCall(`/teams/${teamId}/members`),
     getTeam: (teamId) => apiCall(`/teams/${teamId}/details`),
     updateTeam: (teamId, name = undefined, description = undefined, profilePicture = undefined, banner = undefined) => apiCall(`/teams/${teamId}`, { name, description, profilePicture, banner }, "POST"),
     listTeams: () => apiCall(`/teams`),
