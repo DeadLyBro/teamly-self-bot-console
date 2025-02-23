@@ -304,9 +304,9 @@ export type api = {
 	editMessage(channelId: string, messageId: string, newMessage: string, body?: any): Promise<any>
 	reactToMessage(channelId: string, messageId: string, emojiId: string): Promise<any>
 	deleteMessage(channelId: string, messageId: string): Promise<any>
-
+	
 	sendEmbed(channelId: string, content: string, embed?: Embed[]): Promise<Message>
-
+	
 	/* Teams */
 		/* Members */
 		addRole(teamId: string, userId: string, roleId: string): Promise<any>
@@ -325,7 +325,7 @@ export type api = {
 	cloneRole(teamId: string, roleId: string): Promise<any>
 	updateRolePriority(teamId: string, multipleRoleIds: any[]): Promise<any>
 	updateRole(teamId: string, roleId: string, name: string, color: string, permissions?: any, isDisplayedSeparately?: boolean, color2?: string): Promise<any>
-
+	
 	/* Users */
 	getUser(userId: string): Promise<User>
 	getCurrentUser(): Promise<any>
@@ -347,26 +347,24 @@ export type api = {
 	
 	/* Applications */
 	getApplications(teamId: string): Promise<any>
-    updateApplicationStatus(teamId: string, applicationId: string, status: string): Promise<any>
-    updateTeamApplicationStatus(teamId: string, status: string): Promise<any>
-    updateApplicationQuestions(teamId: string, description: string, questions: any): Promise<any>
-    getApplication(teamId: string, applicationId: string): Promise<any>
+	updateApplicationStatus(teamId: string, applicationId: string, status: string): Promise<any>
+	updateTeamApplicationStatus(teamId: string, status: string): Promise<any>
+	updateApplicationQuestions(teamId: string, description: string, questions: any): Promise<any>
+	getApplication(teamId: string, applicationId: string): Promise<any>
 	
 	/* Custom Reactions */
 	listCustomReactions(teamId: string): Promise<any>
-    createCustomReaction(teamId: string, name?: string, emoji?: file): Promise<any>
+	createCustomReaction(teamId: string, name?: string, emoji?: file): Promise<any>
 	updateCustomReaction(teamId: string, reactionId: string, name: string): Promise<any>
-    deleteCustomReaction(teamId: string, reactionId: string): Promise<any>
+	deleteCustomReaction(teamId: string, reactionId: string): Promise<any>
 	
 	/* Attachments */
 	uploadAttachment(image: any, type: string): Promise<any>
 	
-	/* Voice is don't working at the moment (don't know why) */
-	/*
-	joinVoiceChannel(teamId: string, channelId: string, isMuted: boolean, isDeafened: boolean): Promise<any>
-	updateVoiceSettings(teamId: string, channelId: string, isMuted: boolean, isDeafened: boolean): Promise<any>
+	/* Voice */
+	joinVoiceChannel(teamId: string, channelId: string, isMuted?: boolean, isDeafened?: boolean): Promise<any>
+	updateVoiceSettings(teamId: string, channelId: string, isMuted?: boolean, isDeafened?: boolean): Promise<any>
 	leaveVoiceChannel(teamId: string, channelId: string): Promise<any>
-	*/
 	
 	/* Webhooks */
 	sendWebhookMessage(webhookId: string, webhookToken: string, username: string, content: string, embeds?: Embed[]): Promise<any>
