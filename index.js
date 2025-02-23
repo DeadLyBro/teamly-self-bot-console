@@ -179,12 +179,10 @@
       return apiCall(`/upload`, formData, 'POST')
     },
 
-    /* Voice is not working for User Accounts, join manual instead. */
-    /*
+    /* Voice :: May be bugged, use join/update/leave instead this if you're user account. */
     joinVoiceChannel: (teamId, channelId, isMuted = false, isDeafened = false) => apiCall(`/teams/${teamId}/channels/${channelId}/join?isMuted=${isMuted}&isDeafened=${isDeafened}`),
     updateVoiceSettings: (teamId, channelId, isMuted = false, isDeafened = false) => apiCall(`/teams/${teamId}/channels/${channelId}/metadata`, { isMuted, isDeafened }, 'POST'),
     leaveVoiceChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/leave`),
-    */
 
     /* Webhooks */
     sendWebhookMessage: (webhookId, webhookToken, username, content = 'Demo message.', embeds = undefined) => apiCall(`/webhooks/${webhookId}/${webhookToken}`, { username, content, embeds }, 'POST'),
