@@ -215,12 +215,10 @@ var api = {
       return apiCall(`/upload`, formData, "POST");
     },
 
-    /* Voice :: Ses kısmı çalışmıyor, neden bilmiyorum. */
-    /*
-    joinVoiceChannel: (teamId, channelId, isMuted, isDeafened) => apiCall(`/teams/${teamId}/channels/${channelId}/join?isMuted=${isMuted ?? false}&isDeafened=${isDeafened ?? false}`),
-    updateVoiceSettings: (teamId, channelId, isMuted, isDeafened) => apiCall(`/teams/${teamId}/channels/${channelId}/metadata`, { isMuted, isDeafened }, 'POST'),
+    /* Voice */
+    joinVoiceChannel: (teamId, channelId, isMuted = false, isDeafened = false) => apiCall(`/teams/${teamId}/channels/${channelId}/join?isMuted=${isMuted}&isDeafened=${isDeafened}`),
+    updateVoiceSettings: (teamId, channelId, isMuted = false, isDeafened = false) => apiCall(`/teams/${teamId}/channels/${channelId}/metadata`, { isMuted, isDeafened }, 'POST'),
     leaveVoiceChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/leave`),
-    */
 
     /* Webhooks */
     sendWebhookMessage: (webhookId, webhookToken, username, content = "Demo message.", embeds = undefined) => apiCall(`/webhooks/${webhookId}/${webhookToken}`, { username, content, embeds }, "POST"),
