@@ -179,7 +179,7 @@
       return apiCall(`/upload`, formData, 'POST')
     },
 
-    /* Voice is don't working at the moment (don't know why) */
+    /* Voice is not working for User Accounts, join manual instead. */
     /*
     joinVoiceChannel: (teamId, channelId, isMuted, isDeafened) => apiCall(`/teams/${teamId}/channels/${channelId}/join?isMuted=${isMuted ?? false}&isDeafened=${isDeafened ?? false}`),
     updateVoiceSettings: (teamId, channelId, isMuted, isDeafened) => apiCall(`/teams/${teamId}/channels/${channelId}/metadata`, { isMuted, isDeafened }, 'POST'),
