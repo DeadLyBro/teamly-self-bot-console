@@ -304,6 +304,7 @@ export type api = {
 	editMessage(channelId: string, messageId: string, newMessage: string, body?: any): Promise<any>
 	reactToMessage(channelId: string, messageId: string, emojiId: string): Promise<any>
 	deleteMessage(channelId: string, messageId: string): Promise<any>
+        getMessage(channelId: string, messageId: string): Promise<any>
 	
 	sendEmbed(channelId: string, content: string, embed?: Embed[]): Promise<Message>
 	
