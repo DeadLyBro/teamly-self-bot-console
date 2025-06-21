@@ -1,7 +1,7 @@
 const WebSocket = require('ws'); // Websocket bağlantımız
 
 // Bot ayarları
-const token = 'api_xxx';      // Bot Kimliği (Tokeni) İsterseniz env kullanabilirsiniz
+const token = 'tly_xxx';      // Bot Kimliği (Tokeni) İsterseniz env kullanabilirsiniz
 const prefix = '!';           // Diğer botlarla karışmamak için ön ek (değiştirmeniz önerilir)
 const adminId = '1234567890'; // Buraya kendi ID'nizi girip daha sonra isterseniz kullanabilirsiniz
 
@@ -95,11 +95,11 @@ var apiCall = (apiPath, body, method = 'GET', options = {}) => {
 				return res.text(); // değilse metni döndür
 			}
 		}
-		throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+		console.error(`Failed to fetch: ${res.status} ${res.statusText}`);
 	})
 	.catch(err => {
 		console.error(err);
-		throw new Error('An error occurred while fetching the API.');
+		console.error('An error occurred while fetching the API.');
 	});
 }
 
