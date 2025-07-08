@@ -66,165 +66,164 @@
   var api = {
     /* Channels */
       /* Update Channel */
-      updateChannel: (teamId, channelId, name, additionalData = undefined) => apiCall(`/teams/${teamId}/channels/${channelId}`, { name, additionalData }, 'PATCH'),
-      updateChannelRolePermissions: (teamId, channelId, roleId, allow = 0, deny = 0) => apiCall(`/teams/${teamId}/channels/${channelId}/permissions/role/${roleId}`, { allow, deny }, 'POST'),
-    getChannels: teamId => apiCall(`/teams/${teamId}/channels`),
-    createChannel: (teamId, name, type = 'text', additionalData = { streamChannel: undefined, streamPlatform: undefined }) =>
-      apiCall(`/teams/${teamId}/channels`, { name, type, additionalData }, 'PUT'),
-    deleteChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}`, undefined, 'DELETE'),
-    duplicateChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/clone`, undefined, 'POST'),
-    updateChannelPriority: (teamId, channels) => apiCall(`/teams/${teamId}/channelspriority`, channels, 'PUT'),
-    /* getChannel: channelId => apiCall(`/teams/${teamId}/channels/${channelId}`), */
+      updateChannel: (teamId, channelId, name, additionalData = {}) => apiCall(`/teams/${teamId}/channels/${channelId}`, { name, additionalData }, "PATCH"),
+      updateChannelRolePermissions: (teamId, channelId, roleId, allow = 0, deny = 0) => apiCall(`/teams/${teamId}/channels/${channelId}/permissions/role/${roleId}`, { allow, deny }, "POST"),
+    getChannels: (teamId) => apiCall(`/teams/${teamId}/channels`),
+    createChannel: (teamId, name, type = "text", additionalData = { streamChannel: null, streamPlatform: null }) => apiCall(`/teams/${teamId}/channels`, { name, type, additionalData }, "PUT"),
+    deleteChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}`, null, "DELETE"),
+    duplicateChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/clone`, null, "POST"),
+    updateChannelPriority: (teamId, channels) => apiCall(`/teams/${teamId}/channelspriority`, channels, "PUT"),
+    getChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}`),
 
     /* Messages */
-    getMessages: (channelId, limit = 50, params = {}) => apiCall(`/channels/${channelId}/messages?limit=${limit ?? 50}&${qs(params)}`),
-    sendMessage: (channelId, message, body = {}) => apiCall(`/channels/${channelId}/messages`, { content: message, ...body }, 'POST'),
-    replyToMessage: (channelId, repliedMessageId, message, body = {}) => apiCall(`/channels/${channelId}/messages`, { content: message, replyTo: repliedMessageId, ...body }, 'POST'),
-    editMessage: (channelId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH'),
-    reactToMessage: (channelId, messageId, emojiId) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiId}`, undefined, 'POST'),
-    deleteMessage: (channelId, messageId) => apiCall(`/channels/${channelId}/messages/${messageId}`, undefined, 'DELETE'),
+    getMessages: (channelId, limit = 50, params = {}) => apiCall(`/channels/${channelId}/messages?limit=${limit}&${qs(params)}`),
+    sendMessage: (channelId, message, body = {}) => apiCall(`/channels/${channelId}/messages`, { content: message, ...body }, "POST"),
+    replyToMessage: (channelId, repliedMessageId, message, body = {}) => apiCall(`/channels/${channelId}/messages`, { content: message, replyTo: repliedMessageId, ...body }, "POST"),
+    editMessage: (channelId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelId}/messages/${messageId}`, { content: newMessage, ...body }, "PATCH"),
+    reactToMessage: (channelId, messageId, emojiId) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiId}`, null ,"POST"),
+    deleteMessage: (channelId, messageId) => apiCall(`/channels/${channelId}/messages/${messageId}`, null, "DELETE"),
     getMessage: (channelId, messageId) => apiCall(`/channels/${channelId}/messages/${messageId}`),
 
-    /* typing: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/typing`, undefined, 'POST'), */ // Just works with WebSocket event
+    // Not implemented yet, you can just get typing with websocket event: CHANNEL_TYPING
+    /* typing: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/typing`, null, 'POST'), */
 
     // Use this generator: https://discord.club/dashboard
     // Click `+` at the bottom in the embed section then copy the `embed` key in the JSON output.
-    // Does not work with user account!
-    sendEmbed: (
-      channelId,
-      content = '‏',
-      embeds = [
-        {
-          title: 'Title',
-          description: 'Description',
-          color: 0x00ff00,
-          author: { name: undefined, icon_url: undefined },
-          thumbnail: { url: null },
-          image: { url: undefined },
-          footer: { text: undefined, icon_url: undefined },
-        },
-      ],
-    ) => apiCall(`/channels/${channelId}/messages`, { content, embeds }, 'POST'),
+    // You can try but it does not work with user account!
+    sendEmbed: (channelId, content = 'Teamly da best!', embeds = [{ title: "Title", description: "Description", color: 0x00ff00 }]) => apiCall(`/channels/${channelId}/messages`, { content, embeds }, "POST"),
 
     /* Teams */
       /* Members */
-      addRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, undefined, 'POST'),
-      removeRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, undefined, 'DELETE'),
-      kickMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`, undefined, 'DELETE'),
+      addRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, null, "POST"),
+      removeRole: (teamId, userId, roleId) => apiCall(`/teams/${teamId}/members/${userId}/roles/${roleId}`, null, "DELETE"),
+      kickMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`, null, "DELETE"),
       getMember: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}`),
-      listMembers: teamId => apiCall(`/teams/${teamId}/members`),
-    getTeam: teamId => apiCall(`/teams/${teamId}/details`),
-    updateTeam: (teamId, name = undefined, description = undefined, profilePicture = undefined, banner = undefined) => apiCall(`/teams/${teamId}`, { name, description, profilePicture, banner }, 'POST'),
+      listMembers: (teamId) => apiCall(`/teams/${teamId}/members`),
+      /* Bans */
+      getBannedUsers: teamId => apiCall(`/teams/${teamId}/bans`),
+      unbanUser: (teamId, userId) => apiCall(`/teams/${teamId}/members/${userId}/ban`, null, 'DELETE'),
+      banUser: (teamId, userId, reason = '') => apiCall(`/teams/${teamId}/members/${userId}/ban`, { reason }, 'POST'),
+    getTeam: (teamId) => apiCall(`/teams/${teamId}/details`),
+    updateTeam: (teamId, name = null, description = null, profilePicture = null, banner = null) => apiCall(`/teams/${teamId}`, { name, description, profilePicture, banner }, "POST"),
+    leaveTeam: teamId => apiCall(`/teams`, { id: teamId }, 'DELETE'),
     listTeams: () => apiCall(`/teams`),
+    auditLogs: (teamId, limit = 50) => apiCall(`/teams/${teamId}/audit-logs?limit=${limit}`),
 
     /* Roles */
+    createRole: (teamId, name, color, isDisplayedSeparately = false, permissions = undefined, color2 = null) => apiCall(`/teams/${teamId}/roles`, { name, permissions, color, color2, isDisplayedSeparately },"POST"),
     getRoles: teamId => apiCall(`/teams/${teamId}/roles`),
-    createRole: (teamId, name, color, permissions = undefined, isDisplayedSeparately = false, color2 = undefined) => apiCall(`/teams/${teamId}/roles`, { name, color, permissions, isDisplayedSeparately, color2 }, 'POST'),
-    deleteRole: (teamId, roleId) => apiCall(`/teams/${teamId}/roles/${roleId}`, undefined, 'DELETE'),
-    cloneRole: (teamId, roleId) => apiCall(`/teams/${teamId}/roles/${roleId}/clone`, undefined, 'POST'),
-    updateRolePriority: (teamId, multipleRoleIds) => apiCall(`/teams/${teamId}/roles-priority`, [multipleRoleIds], 'PATCH'),
-    updateRole: (teamId, roleId, name, color, permissions = undefined, isDisplayedSeparately = false, color2 = undefined) => apiCall(`/teams/${teamId}/roles/${roleId}`, { name, color, permissions, isDisplayedSeparately, color2 }, 'PATCH'),
+    deleteRole: (teamId, roleId) => apiCall(`/teams/${teamId}/roles/${roleId}`, null, "DELETE"),
+    cloneRole: (teamId, roleId) => apiCall(`/teams/${teamId}/roles/${roleId}/clone`, null, "POST"),
+    updateRolePriority: (teamId, roleIds = []) => apiCall(`/teams/${teamId}/roles-priority`, roleIds, "PATCH"),
+    updateRole: (teamId, roleId, name, color, isDisplayedSeparately = false, permissions = undefined, color2 = null) => apiCall(`/teams/${teamId}/roles/${roleId}`, { name, permissions, color, color2, isDisplayedSeparately }, "PATCH"),
 
     /* Users */
     getUser: userId => apiCall(`/users/${userId}`),
     getCurrentUser: () => apiCall(`/me`),
 
     /* Custom Status */
-    setCustomStatus: (content = undefined, emojiId = undefined) => apiCall(`/me/status`, { content, emojiId }, 'POST'),
-    deleteCustomStatus: () => apiCall(`/me/status`, undefined, 'DELETE'),
+    setCustomStatus: (content = 'DeadLyBro\'dan selamlar!', emojiId = '🍃') => apiCall(`/me/status`, { content, emojiId }, "POST"),
+    deleteCustomStatus: () => apiCall(`/me/status`, null, "DELETE"),
 
     /* Todos */
-    getTodos: channelId => apiCall(`/channels/${channelId}/todo/list`),
-    createTodo: (channelId, message) => apiCall(`/channels/${channelId}/todo/item`, { content: message }, 'POST'),
-    deleteTodo: (channelId, todoId) => apiCall(`/channels/${channelId}/todo/item/${todoId}`, undefined, 'DELETE'),
-    cloneTodo: (channelId, todoId) => apiCall(`/channels/${channelId}/todo/item/${todoId}/clone`, undefined, 'POST'),
-    updateTodo: (channelId, todoId, newMessage) => apiCall(`/channels/${channelId}/todo/item/${todoId}`, { content: newMessage }, 'PUT'),
+    getTodos: (channelId) => apiCall(`/channels/${channelId}/todo/list`),
+    createTodo: (channelId, message) => apiCall(`/channels/${channelId}/todo/item`, { content: message }, "POST"),
+    deleteTodo: (channelId, todoId) => apiCall( `/channels/${channelId}/todo/item/${todoId}`, null, "DELETE"),
+    cloneTodo: (channelId, todoId) => apiCall(`/channels/${channelId}/todo/item/${todoId}/clone`, null, "POST"),
+    updateTodo: (channelId, todoId, content) => apiCall(`/channels/${channelId}/todo/item/${todoId}`, { content }, "PUT"),
 
     /* DMs */
     getDMs: () => apiCall(`/me/chats`),
-    createDM: userId => apiCall(`/me/chats`, { users: [{ id: userId }] }, 'POST'),
+    createDM: (userId) => apiCall(`/me/chats`, { users: [{ id: userId }] }, "POST"),
 
     /* Applications */
-    getApplications: teamId => apiCall(`/teams/${teamId}/applications`),
-    updateApplicationStatus: (teamId, applicationId, status) => apiCall(`/teams/${teamId}/applications/${applicationId}`, { status }, 'POST'),
-    updateTeamApplicationStatus: (teamId, status) => apiCall(`/teams/${teamId}/applications/status`, { status }, 'POST'),
-    updateApplicationQuestions: (teamId, description, questions = { question: '', type: '' }) => apiCall(`/teams/${teamId}/applications`, { description, questions }, 'PATCH'),
+    getApplications: (teamId) => apiCall(`/teams/${teamId}/applications`),
+    updateApplicationStatus: (teamId, applicationId, status) => apiCall(`/teams/${teamId}/applications/${applicationId}`, { status }, "POST"),
+    updateTeamApplicationStatus: (teamId, status) => apiCall(`/teams/${teamId}/applications/status`, { status }, "POST"),
+    updateApplicationQuestions: (teamId, description, questions = { question: "", type: "" }) => apiCall(`/teams/${teamId}/applications`, { description, questions }, "PATCH"),
     getApplication: (teamId, applicationId) => apiCall(`/teams/${teamId}/applications/${applicationId}`),
 
     /* Custom Reactions */
-    listCustomReactions: teamId => apiCall(`/teams/${teamId}/reactions`),
-    createCustomReaction: (teamId, name = undefined, emoji = {}) => {
-      const formData = new FormData()
+    listCustomReactions: (teamId) => apiCall(`/teams/${teamId}/reactions`),
+    createCustomReaction: (teamId, name = null, emoji = {}) => {
+      const formData = new FormData();
       formData.append(
-        'payload_json',
-        JSON.stringify({
-          name,
-          ...(emoji || {}),
-        }),
-      )
-      return apiCall(`/teams/${teamId}/reactions`, formData, 'POST')
+      "payload_json",
+      JSON.stringify({
+        name,
+        ...(emoji || {}),
+      })
+      );
+      return apiCall(`/teams/${teamId}/reactions`, formData, "POST");
     },
-    updateCustomReaction: (teamId, reactionId, name) => apiCall(`/teams/${teamId}/reactions/${reactionId}`, { name: name }, 'PUT'),
-    deleteCustomReaction: (teamId, reactionId) => apiCall(`/teams/${teamId}/reactions/${reactionId}`, undefined, 'DELETE'),
+    updateCustomReaction: (teamId, reactionId, name) => apiCall(`/teams/${teamId}/reactions/${reactionId}`, { name: name }, "PUT"),
+    deleteCustomReaction: (teamId, reactionId) => apiCall(`/teams/${teamId}/reactions/${reactionId}`, null, "DELETE"),
 
     /* Attachments */
     uploadAttachment: (image, type) => {
-      const formData = new FormData()
-      formData.append('file', image)
+      const formData = new FormData();
+      formData.append("file", image);
       formData.append(
-        'payload_json',
-        JSON.stringify({
-          type,
-        }),
-      )
-      return apiCall(`/upload`, formData, 'POST')
+      "payload_json",
+      JSON.stringify({
+        type,
+      })
+      );
+      return apiCall(`/upload`, formData, "POST");
     },
 
-    /* Voice :: May be bugged, use join/update/leave instead this if you're user account. */
+    /* Voice [May be have bug!] */
     joinVoiceChannel: (teamId, channelId, isMuted = false, isDeafened = false) => apiCall(`/teams/${teamId}/channels/${channelId}/join?isMuted=${isMuted}&isDeafened=${isDeafened}`),
-    updateVoiceSettings: (teamId, channelId, isMuted = false, isDeafened = false) => apiCall(`/teams/${teamId}/channels/${channelId}/metadata`, { isMuted, isDeafened }, 'POST'),
+    updateVoiceSettings: (teamId, channelId, isMuted, isDeafened) => apiCall(`/teams/${teamId}/channels/${channelId}/metadata`, { isMuted, isDeafened }, 'POST'),
     leaveVoiceChannel: (teamId, channelId) => apiCall(`/teams/${teamId}/channels/${channelId}/leave`),
 
     /* Webhooks */
-    sendWebhookMessage: (webhookId, webhookToken, username, content = 'Demo message.', embeds = undefined) => apiCall(`/webhooks/${webhookId}/${webhookToken}`, { username, content, embeds }, 'POST'),
-    webhookForGithub: (webhookId, webhookToken) => apiCall(`/webhooks/${webhookId}/${webhookToken}/github`, undefined, 'POST'),
+    sendWebhookMessage: (webhookId, webhookToken, username, content = "Demo message.", embeds = [{ title: "Demo Embed", description: "This is a demo embed message sent via webhook.", color: 0x00ff00, }]) => apiCall(`/webhooks/${webhookId}/${webhookToken}`, { username, content, embeds }, "POST"),
+    webhookForGithub: (webhookId, webhookToken) => apiCall(`/webhooks/${webhookId}/${webhookToken}/github`, null, "POST"),
 
     /* Blog */
-    getBlogPosts: teamId => apiCall(`/teams/${teamId}/blogs`),
-    createBlogPost: (teamId, title, content, heroImage = undefined) => apiCall(`/teams/${teamId}/blogs`, { title, content, heroImage }, 'POST'),
-    deleteBlogPost: (teamId, blogId) => apiCall(`/teams/${teamId}/blogs/${blogId}`, undefined, 'DELETE'),
+    getBlogPosts: (teamId) => apiCall(`/teams/${teamId}/blogs`),
+    createBlogPost: (teamId, title, content, heroImage = null) => apiCall(`/teams/${teamId}/blogs`, { title, content, heroImage }, "POST"),
+    deleteBlogPost: (teamId, blogId) => apiCall(`/teams/${teamId}/blogs/${blogId}`, null, "DELETE"),
 
     /* Category */
-    createCategory: (teamId, name) => apiCall(`/teams/${teamId}/categories`, { name }, 'POST'),
-    updateCategory: (teamId, categoryId, name) => apiCall(`/teams/${teamId}/categories/${categoryId}`, { name }, 'PUT'),
-    updateCategoryRolePermissions: (teamId, categoryId, roleId, allow, deny = undefined) => apiCall(`/teams/${teamId}/categories/${categoryId}/permissions/role/${roleId}`, { allow, deny }, 'POST'),
-    deleteCategory: (teamId, categoryId) => apiCall(`/teams/${teamId}/categories/${categoryId}`, undefined, 'DELETE'),
-    addChannelToCategory: (teamId, categoryId, channelId) => apiCall(`/teams/${teamId}/categories/${categoryId}/channels/${channelId}`, undefined, 'POST'),
-    removeChannelFromCategory: (teamId, categoryId, channelId) => apiCall(`/teams/${teamId}/categories/${categoryId}/channels/${channelId}`, undefined, 'DELETE'),
-    setChannelPriorityOfCategory: (teamId, categoryId, channels) => apiCall(`/teams/${teamId}/categories/${categoryId}/channels-priority`, { channels }, 'POST'),
-    setCategoryPriorityOfTeam: (teamId, categories) => apiCall(`/teams/${teamId}/categories-priority`, { categories }, 'POST'),
+    createCategory: (teamId, name) => apiCall(`/teams/${teamId}/categories`, { name }, "POST"),
+    updateCategory: (teamId, categoryId, name) => apiCall(`/teams/${teamId}/categories/${categoryId}`, { name }, "PUT"),
+    updateCategoryRolePermissions: (teamId, categoryId, roleId, allow, deny = undefined) => apiCall( `/teams/${teamId}/categories/${categoryId}/permissions/role/${roleId}`, { allow, deny }, "POST"),
+    deleteCategory: (teamId, categoryId) => apiCall(`/teams/${teamId}/categories/${categoryId}`, null, "DELETE"),
+    addChannelToCategory: (teamId, categoryId, channelId) => apiCall(`/teams/${teamId}/categories/${categoryId}/channels/${channelId}`, null, "POST"),
+    removeChannelFromCategory: (teamId, categoryId, channelId) => apiCall(`/teams/${teamId}/categories/${categoryId}/channels/${channelId}`, null, "DELETE"),
+    setChannelPriorityOfCategory: (teamId, categoryId, channels) => apiCall(`/teams/${teamId}/categories/${categoryId}/channels-priority`, { channels }, "POST"),
+    setCategoryPriorityOfTeam: (teamId, categories) => apiCall(`/teams/${teamId}/categories-priority`, { categories }, "POST"),
 
+    /* Announcements */
+    getAnnouncements: channelId => apiCall(`/channels/${channelId}/announcements`),
+    createAnnouncement: (channelId, title, content, tagEveryone = false) => apiCall(`/channels/${channelId}/announcements`, { title, content, tagEveryone }, 'POST'),
+    deleteAnnouncement: (channelId, announcementId) => apiCall(`/channels/${channelId}/announcements/${announcementId}`, null, 'DELETE'),
+
+    /* Misc. */
     delay,
     downloadFileByUrl: (url, filename) =>
       fetch(url)
-        .then(response => response.blob())
-        .then(blob => {
-          const link = document.createElement('a')
-          link.href = URL.createObjectURL(blob)
-          link.download = filename
-          link.click()
-        })
-        .catch(console.error),
+      .then((response) => response.blob())
+      .then((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+      })
+      .catch(console.error),
     apiCall,
     id,
     update_teamId_and_channelId_withCurrentlyVisible,
-    getConfig: () => Object.freeze({ cookie, teamId: tid, channelId: cid, tid, cid }),
-    setConfigCookie: token => (cookie = token),
-    setConfigTid: id => (tid = id),
-    setConfigTeamId: id => (tid = id),
-    setConfigCid: id => (cid = id),
-    setConfigChannelId: id => (cid = id),
-  }
+    getConfig: () =>
+      Object.freeze({ cookie, teamId: tid, channelId: cid, tid, cid }),
+    setConfigCookie: (token) => (cookie = token),
+    setConfigTid: (id) => (tid = id),
+    setConfigTeamId: (id) => (tid = id),
+    setConfigCid: (id) => (cid = id),
+    setConfigChannelId: (id) => (cid = id),
+  };
 
   console.log('\n\n\n\nSelfbot loaded! Use it like this: `await api.someFunction()`')
   console.log('Abusing this could get you banned from Teamly, use at your own risk!')
