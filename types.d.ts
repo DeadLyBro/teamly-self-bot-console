@@ -272,9 +272,9 @@ export type api = {
 
   /* Messages */
   getMessages(channelId: string, limit?: number, params?: any): Promise<Message[]>
-  sendMessage(channelId: string, message: string, body?: any): Promise<any>
-  replyToMessage(channelId: string, repliedMessageId: string, message: string, body?: any): Promise<any>
-  editMessage(channelId: string, messageId: string, newMessage: string, body?: any): Promise<any>
+  sendMessage(channelId: string, content: string, body?: any): Promise<any>
+  replyToMessage(channelId: string, repliedMessageId: string, content: string, body?: any): Promise<any>
+  editMessage(channelId: string, messageId: string, content: string, body?: any): Promise<any>
   reactToMessage(channelId: string, messageId: string, emojiId: string): Promise<any>
   deleteMessage(channelId: string, messageId: string): Promise<any>
   getMessage(channelId: string, messageId: string): Promise<any>
@@ -316,10 +316,10 @@ export type api = {
 
   /* Todos */
   getTodos(channelId: string): Promise<any>
-  createTodo(channelId: string, message: string): Promise<any>
+  createTodo(channelId: string, content: string): Promise<any>
   deleteTodo(channelId: string, todoId: string): Promise<any>
   cloneTodo(channelId: string, todoId: string): Promise<any>
-  updateTodo(channelId: string, todoId: string, newMessage: string): Promise<any>
+  updateTodo(channelId: string, todoId: string, content: string): Promise<any>
 
   /* DMs */
   getDMs(): Promise<DM[]>
