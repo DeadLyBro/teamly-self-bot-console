@@ -278,11 +278,11 @@ ws.on('message', async function incoming(data) {
         const {message, channelId, channelType, teamId} = eventData;
 
         if((message.content)?.toLowerCase() === prefix + "ping") {
-          let reply = await api.replyToMessage(channelId, message.id, `Pong <@${message.createdBy.id}>! Gecikme ölçülüyor...`)
+          let reply = (await api.replyToMessage(channelId, message.id, `Pong <@${message.createdBy.id}>! Gecikme ölçülüyor...`)).message;
           
-          let ping = Date.parse(reply.message.createdAt) - Date.parse(message.createdAt);
+          let ping = Date.parse(reply.createdAt) - Date.parse(message.createdAt);
           
-          api.editMessage(channelId, reply.message.id, null, {
+          api.editMessage(channelId, reply.id, null, {
             embeds: [
               {
                 title: '🏓 Pong!',
