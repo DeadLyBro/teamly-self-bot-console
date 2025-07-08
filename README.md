@@ -38,32 +38,32 @@ Update `cid` to the channel you are watching, get the last 50 messages, send a m
 
 ```js
 {
-  api.id()
-  // or api.update_teamId_and_channelId_withCurrentlyVisible()
+  api.id();
+  // or api.update_teamId_and_channelId_withCurrentlyVisible();
   
-  let userInfo = await api.getCurrentUser();
+  let userInfo = (await api.getCurrentUser()).user;
 
-  let channelId = cid
-  // or let channelId = api.getConfig().channelId
+  let channelId = cid;
+  // or let channelId = api.getConfig().channelId;
 
   // Send a message
-  let sentMessage = await api.sendMessage(channelId, `Hello! 👋 My name is ${userInfo.user.username}!`)
+  let sentMessage = (await api.sendMessage(channelId, `Hello! 👋 My name is ${userInfo.username}!`)).message;
 
-  await api.delay(2000)
+  await api.delay(2000);
   
   // Edit a message
-  let editedMessage = await api.editMessage(channelId, sentMessage.message.id, 'Hello, edited! ✌️')
+  let editedMessage = (await api.editMessage(channelId, sentMessage.id, 'Hello, edited! ✌️')).message;
 
-  await api.delay(2000)
+  await api.delay(2000);
 
   // Delete a message
-  await api.deleteMessage(channelId, editedMessage.message.id)
+  await api.deleteMessage(channelId, editedMessage.id);
 
-  await api.delay(2000)
+  await api.delay(2000);
 
   // Log the last 50 messages in the console
-  let messages = await api.getMessages(channelId)
-  console.log(messages)
+  let messages = (await api.getMessages(channelId)).messages;
+  console.log(messages);
 }
 ```
 
@@ -94,9 +94,9 @@ const { api } = require('../index.js')
 
 // Copy paste the below code inside the Browser Devtools Console
 ;(async () => {
-  const userInfo = await api.getCurrentUser()
+  const userInfo = (await api.getCurrentUser()).user;
 
-  console.log(userInfo.user.username)
+  console.log(userInfo.username)
 })()
 ```
 
@@ -125,8 +125,8 @@ You can use `loop = false` at any time to stop it.
   var loop = true
   let count = 0
   while (loop) {
-    const sentMessage = await api.sendMessage(channelId, message)
-    await api.deleteMessage(channelId, sentMessage.message.id)
+    const sentMessage = (await api.sendMessage(channelId, message)).message;
+    await api.deleteMessage(channelId, sentMessage.id)
     console.log(`Sent ${++count} messages`)
     await api.delay(61*1000) // 61 seconds
   }
@@ -156,10 +156,10 @@ Teamly's rate limit may be strictier. I recommend 1100ms as a minimum to not get
   var offsetNum = 0
 
   while (loop) {
-    const messages = await api.getMessages(channelId, undefined, { offset: offsetNum })
+    const messages = (await api.getMessages(channelId, undefined, { offset: offsetNum })).messages;
 
     // We reached the start of the conversation
-    if (messages.messages.length < 50 && messages.messages.filter(x => x.createdBy.id === userId).length === 0) {
+    if (messages.length < 50 && messages.filter(x => x.createdBy.id === userId).length === 0) {
       loop = false
       console.log(`[${deletionCount}/${amount}] Reached the start of the conversations! Ending.`)
       continue
@@ -168,7 +168,7 @@ Teamly's rate limit may be strictier. I recommend 1100ms as a minimum to not get
     // Update last message snowflake for next iteration
     offsetNum = offsetNum+=50
 
-    for (const aMessage of messages.messages) {
+    for (const aMessage of messages) {
       if (loop === false) break
 
       // Check if the max amount was reached
@@ -234,10 +234,10 @@ This example will apply all reactions already there on all messages, then add �
   var offsetNum = 0
   
   while (loop) {
-    const messages = await api.getMessages(channelId, undefined, { offset: offsetNum })
+    const messages = (await api.getMessages(channelId, undefined, { offset: offsetNum })).messages;
 
     // We reached the start of the conversation
-    if (messages.messages.length < 50 && messages.messages.length === 0) {
+    if (messages.length < 50 && messages.length === 0) {
       loop = false
       console.log(`[${count}/${amount}] Reached the start of the conversation! Ending.`)
       continue
@@ -246,7 +246,7 @@ This example will apply all reactions already there on all messages, then add �
     // Update last message snowflake for next iteration
     offsetNum = offsetNum+=50
 
-    for (const aMessage of messages.messages) {
+    for (const aMessage of messages) {
       if (loop === false) break
 
       // Check if the max amount was reached
@@ -313,9 +313,9 @@ api.delay(ms)
 api.apiCall(apiPath, body, method = 'GET')
 
 api.getMessages(channelId, limit?, params = {}) 
-api.sendMessage(channelId, message, body = {})
-api.replyToMessage(channelId, repliedMessageId, message, body = {})
-api.editMessage(channelId, messageId, newMessage, body = {})
+api.sendMessage(channelId, content, body = {})
+api.replyToMessage(channelId, repliedMessageId, content, body = {})
+api.editMessage(channelId, messageId, content, body = {})
 api.deleteMessage(channelId, messageId)
 
 api.getCurrentUser()
