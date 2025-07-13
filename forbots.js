@@ -282,7 +282,7 @@ ws.on('message', async function incoming(data) {
           
           let ping = Date.parse(reply.createdAt) - Date.parse(message.createdAt);
           
-          api.editMessage(channelId, reply.id, null, {
+          api.editMessage(channelId, reply.id, undefined, {
             embeds: [
               {
                 title: '🏓 Pong!',
