@@ -35,7 +35,7 @@
         Accept: '*/*',
         'Accept-Language': 'tr',
         Cookie: cookie,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Teamly/0.0.21-beta Chrome/130.0.6723.137 Electron/33.2.1 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Teamly/0.0.31-beta Chrome/130.0.6723.137 Electron/33.2.1 Safari/537.36',
       },
       ...options,
     }
